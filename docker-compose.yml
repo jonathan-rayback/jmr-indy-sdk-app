@@ -14,6 +14,7 @@ services:
     volumes:
       - /Users/jrayback/src/personal/misc/indy/jmr-indy-sdk/.indy_client:/root/.indy_client
       - /Users/jrayback/src/personal/misc/indy/jmr-indy-sdk/.ssh:/root/.ssh
+      - /Users/jrayback/src/personal/misc/indy/jmr-indy-sdk/genesis:/root/genesis
       - /root/app/node_modules
       - .:/root/app
     command: /bin/bash
