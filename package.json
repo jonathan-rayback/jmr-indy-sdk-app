@@ -1,0 +1,17 @@
+{
+  "name": "node-indy-sdk",
+  "version": "0.0.1",
+  "description": "Test app to practice LibIndy node wrapper",
+  "main": "index.js",
+  "dependencies": {
+    "indy-sdk": "^1.15"
+  },
+  "devDependencies": {
+    "standard": "^14.3.4"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Jonathan Rayback",
+  "private": true
+}
