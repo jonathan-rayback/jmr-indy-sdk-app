@@ -4,13 +4,14 @@
   "description": "Test app to practice LibIndy node wrapper",
   "main": "index.js",
   "dependencies": {
-    "indy-sdk": "^1.15"
+    "indy-sdk": "^1.15",
+    "dotenv": "^8.2.0"
   },
   "devDependencies": {
     "standard": "^14.3.4"
   },
   "scripts": {
-    "start": "node index.js",
+    "app": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Jonathan Rayback",
