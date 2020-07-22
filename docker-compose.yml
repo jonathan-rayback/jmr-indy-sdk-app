@@ -3,6 +3,7 @@ services:
   indy-sdk:
     build: .
     image: jrayback/indy-sdk:latest
+    env_file: .env
     container_name: indy-sdk
     stdin_open: true
     tty: true
