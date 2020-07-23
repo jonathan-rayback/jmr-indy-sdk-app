@@ -21,20 +21,32 @@ async function openLedger (poolName, poolGenesisTxnPath) {
 
 async function closeLedger (poolName, poolHandle) {
   await indy.closePoolLedger(poolHandle)
-  await indy.deletePoolLedgerConfig(poolName)
 }
 
 async function openWallet (name, key) {
   const walletConfig = { id: name }
   const walletCredentials = { key: key }
-  await indy.openWallet(walletConfig, walletCredentials)
+  return await indy.openWallet(walletConfig, walletCredentials).catch(e => {
+    console.log(e)
+  })
 }
 
-async function closeWallet (name, key, wallet) {
-  const walletConfig = { id: name }
-  const walletCredentials = { key: key }
-  await indy.closeWallet(wallet)
-  await indy.deleteWallet(walletConfig, walletCredentials)
+async function closeWallet (name) {
+  await indy.closeWallet(name).catch(e => {
+    console.log(e)
+  })
+}
+
+async function writeNewDid (handle) {
+  // Create and store the new DID
+  const [did, verkey] = await indy.createAndStoreMyDid(handle, {}).catch(e => {
+    console.log(e)
+  })
+  // Write metadata
+  await indy.setDidMetadata(handle, did, 'From getting started').catch(e => {
+    console.log(e)
+  })
+  return [did, verkey]
 }
 
 async function run () {
@@ -42,45 +54,42 @@ async function run () {
   console.log('gettingStarted.js -> started')
 
   // Open ledger, get pool handle
-  // const poolName = 'staging'
-  // const poolGenesisTxnPath = '/root/genesis/stage_gen_txn_file'
-  // console.log(`Open ledger: ${poolName}`)
-  // const poolHandle = await openLedger(poolName, poolGenesisTxnPath)
+  const poolName = 'staging'
+  const poolGenesisTxnPath = '/root/genesis/stage_gen_txn_file'
+  console.log(`Open ledger: ${poolName}`)
+  const poolHandle = await openLedger(poolName, poolGenesisTxnPath)
 
-  // // Ledger is open
-  // console.log('Ledger is open...')
+  // Ledger is open
+  console.log('Ledger is open...')
 
   // Open Jonny's Dawg Shack wallet
   const walletName = 'jonnys-dawg-shack'
   const walletKey = process.env.JONNYS_DAWG_SHACK
-  const walletConfig = { id: walletName }
-  const walletCredentials = { key: walletKey }
-  const jonnysWallet = await indy.openWallet(walletConfig, walletCredentials).catch(e => {
+  console.log(`Open wallet: ${walletName}`)
+  const jonnysWallet = await openWallet(walletName, walletKey).catch(e => {
     console.log(e)
   })
-  const [newDid, newVerKey] = await indy.createAndStoreMyDid(jonnysWallet, {}).catch(e => {
-    console.log(e)
-  })
-  console.log(`${newDid}, ${newVerKey}`)
-  await indy.closeWallet(jonnysWallet).catch(e => {
-    console.log(e)
-  })
-  // console.log(`Open wallet: ${faberCollegeWalletName}`)
-  // const faberCollegeWallet = await openWallet(faberCollegeWalletName, faberCollegeWalletKey)
 
-  // // Faber College wallet is open
-  // console.log('Wallet is open...')
+  // Write new did/verkey pair to Jonny's Dawg Shack wallet
+  console.log(`Writing new DID/Verkey pair to ${walletName}...`)
+  const [newDid, newVerKey] = await writeNewDid(jonnysWallet).catch(e => {
+    console.log(e)
+  })
+  console.log(`Done!
+  ${newDid}:${newVerKey}`)
 
-  // // Close Faber College wallet
-  // console.log(`Close wallet: ${faberCollegeWalletName}`)
-  // await closeWallet(faberCollegeWalletName, faberCollegeWalletKey, faberCollegeWallet)
+  // Close Wallet
+  console.log(`Close wallet: ${walletName}`)
+  await closeWallet(jonnysWallet).catch(e => {
+    console.log(e)
+  })
 
   // Close ledger
-  // console.log(`Close ledger: ${poolName}`)
-  // await closeLedger(poolName, poolHandle)
+  console.log(`Close ledger: ${poolName}`)
+  await closeLedger(poolName, poolHandle)
 
-  // // Finished
-  // console.log('gettingStarted.js -> done')
+  // Finished
+  console.log('gettingStarted.js -> done')
 }
 
 if (require.main.filename === __filename) {
